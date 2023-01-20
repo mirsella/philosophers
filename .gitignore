@@ -2,4 +2,4 @@
 *.out
 *.o
 *.gch
-philo
+philo/philo

@@ -6,7 +6,7 @@
 /*   By: mirsella <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 10:51:43 by mirsella          #+#    #+#             */
-/*   Updated: 2023/01/23 14:55:00 by mirsella         ###   ########.fr       */
+/*   Updated: 2023/01/23 17:27:09 by mirsella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ typedef struct s_data
 	t_philo			philos[MAX_PHILO];
 	pthread_mutex_t	forks[MAX_PHILO];
 	pthread_mutex_t	writing;
-	pthread_mutex_t	check_death;
 }				t_data;
 
 int			parse_args(int ac, char **av, t_data *data);

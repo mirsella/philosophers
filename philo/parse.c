@@ -1,30 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init.c                                             :+:      :+:    :+:   */
+/*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgillard <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 11:15:10 by lgillard          #+#    #+#             */
-/*   Updated: 2023/01/20 16:53:05 by lgillard         ###   ########.fr       */
+/*   Updated: 2023/01/23 11:22:09 by lgillard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
-
-void	free_mutexes(t_data *data)
-{
-	int	i;
-
-	i = 0;
-	while (i < data->rules.nb_philo)
-	{
-		pthread_mutex_destroy(&data->forks[i]);
-		i++;
-	}
-	pthread_mutex_destroy(&data->writing);
-	pthread_mutex_destroy(&data->check_death);
-}
 
 int	init_mutex(t_data *data)
 {
@@ -68,12 +54,12 @@ int	parse_args(int ac, char **av, t_data *data)
 {
 	if (ac < 5 || ac > 6)
 		return (0);
-	data->rules.nb_philo = ft_atoi(av[1]);
-	data->rules.time_to_die = ft_atoi(av[2]);
-	data->rules.time_to_eat = ft_atoi(av[3]);
-	data->rules.time_to_sleep = ft_atoi(av[4]);
+	data->rules.nb_philo = ft_pos_atoi(av[1]);
+	data->rules.time_to_die = ft_pos_atoi(av[2]);
+	data->rules.time_to_eat = ft_pos_atoi(av[3]);
+	data->rules.time_to_sleep = ft_pos_atoi(av[4]);
 	if (ac == 6)
-		data->rules.nb_min_eat = ft_atoi(av[5]);
+		data->rules.nb_min_eat = ft_pos_atoi(av[5]);
 	if (data->rules.nb_philo < 2 || data->rules.nb_philo > 250
 		|| data->rules.time_to_die < 0 || data->rules.time_to_eat < 0
 		|| data->rules.time_to_sleep < 0 || data->rules.nb_min_eat < 0)

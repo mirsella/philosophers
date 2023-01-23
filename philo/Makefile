@@ -1,4 +1,4 @@
-SRCS = main.c init.c utils.c
+SRCS = main.c utils.c free.c parse.c threads.c 
 OBJS = $(SRCS:.c=.o)
 
 CC = cc

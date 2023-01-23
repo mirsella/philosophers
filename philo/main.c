@@ -6,13 +6,13 @@
 /*   By: lgillard <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 11:09:58 by lgillard          #+#    #+#             */
-/*   Updated: 2023/01/20 16:52:28 by mirsella         ###   ########.fr       */
+/*   Updated: 2023/01/23 11:07:33 by lgillard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-int main(int ac, char **av)
+int	main(int ac, char **av)
 {
 	t_data	data;
 	int		ret;
@@ -30,9 +30,6 @@ int main(int ac, char **av)
 		return (1);
 	}
 	ret = start_threads(&data);
-	if (ret <= 0)
-	{
-		if (ret == 0)
-			printf("Error: pthread_create failed");
-	}
+	if (ret == -1)
+		printf("Error: pthread_create failed");
 }

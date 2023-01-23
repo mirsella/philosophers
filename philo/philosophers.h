@@ -6,7 +6,7 @@
 /*   By: mirsella <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 10:51:43 by mirsella          #+#    #+#             */
-/*   Updated: 2023/01/23 11:21:47 by lgillard         ###   ########.fr       */
+/*   Updated: 2023/01/23 14:55:00 by mirsella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,6 @@ typedef struct s_philo
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
 	pthread_mutex_t	*writing;
-	pthread_mutex_t	*check_eat;
 	t_rules			*rules;
 }				t_philo;
 

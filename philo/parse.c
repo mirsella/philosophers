@@ -6,7 +6,7 @@
 /*   By: lgillard <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 11:15:10 by lgillard          #+#    #+#             */
-/*   Updated: 2023/01/23 13:54:26 by lgillard         ###   ########.fr       */
+/*   Updated: 2023/01/23 14:55:09 by mirsella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,6 @@ int	init_mutex(t_data *data)
 		i++;
 	}
 	if (pthread_mutex_init(&data->writing, NULL))
-		return (1);
-	if (pthread_mutex_init(&data->check_death, NULL))
 		return (1);
 	return (0);
 }

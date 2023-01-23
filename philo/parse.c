@@ -6,7 +6,7 @@
 /*   By: lgillard <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 11:15:10 by lgillard          #+#    #+#             */
-/*   Updated: 2023/01/23 11:22:09 by lgillard         ###   ########.fr       */
+/*   Updated: 2023/01/23 13:54:26 by lgillard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,14 @@ int	init_mutex(t_data *data)
 	{
 		pthread_mutex_init(&data->forks[i], NULL);
 		if (&data->forks[i] == NULL)
-			return (0);
+			return (1);
 		i++;
 	}
 	if (pthread_mutex_init(&data->writing, NULL))
-		return (0);
+		return (1);
 	if (pthread_mutex_init(&data->check_death, NULL))
-		return (0);
-	return (1);
+		return (1);
+	return (0);
 }
 
 void	init_philos(t_data *data)
@@ -52,8 +52,7 @@ void	init_philos(t_data *data)
 
 int	parse_args(int ac, char **av, t_data *data)
 {
-	if (ac < 5 || ac > 6)
-		return (0);
+	data->rules.nb_min_eat = -1;
 	data->rules.nb_philo = ft_pos_atoi(av[1]);
 	data->rules.time_to_die = ft_pos_atoi(av[2]);
 	data->rules.time_to_eat = ft_pos_atoi(av[3]);
@@ -62,16 +61,18 @@ int	parse_args(int ac, char **av, t_data *data)
 		data->rules.nb_min_eat = ft_pos_atoi(av[5]);
 	if (data->rules.nb_philo < 2 || data->rules.nb_philo > 250
 		|| data->rules.time_to_die < 0 || data->rules.time_to_eat < 0
-		|| data->rules.time_to_sleep < 0 || data->rules.nb_min_eat < 0)
-		return (-1);
-	if (ac != 6)
-		data->rules.nb_min_eat = -1;
-	if (!init_mutex(data))
+		|| data->rules.time_to_sleep < 0
+		|| (data->rules.nb_min_eat < 1 && ac == 6))
 	{
-		printf("Error: mutex init failed\n");
+		printf("Error: invalid arguments\n");
+		return (1);
+	}
+	if (init_mutex(data))
+	{
+		printf("Error: pthread_init_mutex failed\n");
 		free_mutexes(data);
-		return (-2);
+		return (1);
 	}
 	init_philos(data);
-	return (1);
+	return (0);
 }

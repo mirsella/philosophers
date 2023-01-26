@@ -6,7 +6,7 @@
 /*   By: mirsella <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 10:51:43 by mirsella          #+#    #+#             */
-/*   Updated: 2023/01/23 17:36:58 by lgillard         ###   ########.fr       */
+/*   Updated: 2023/01/26 15:37:54 by lgillard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,13 @@
 # define PHILOSOPHERS_H
 
 # include <stdio.h>
-# include <stdlib.h>
-# include <pthread.h>
-# include <unistd.h>
+# include <pthread.h> // for threads
+# include <unistd.h> // for usleep
 # include <semaphore.h>
-# include <fcntl.h>
-# include <string.h>
-# include <sys/time.h>
+# include <fcntl.h> // for O_* constants
+# include <sys/stat.h> // for mode constants
+# include <string.h> // for memset
+# include <sys/time.h> // for gettimeofday
 
 # define MAX_PHILO 250
 
@@ -38,7 +38,7 @@ typedef struct s_rules
 typedef struct s_philo
 {
 	int			id;
-	pthread_t	thread;
+	pid_t		pid;
 	int			nb_eat;
 	long long	last_eat;
 	sem_t		*forks;
@@ -50,8 +50,8 @@ typedef struct s_data
 {
 	t_rules	rules;
 	t_philo	philos[MAX_PHILO];
-	sem_t	forks;
-	sem_t	writing;
+	sem_t	*forks;
+	sem_t	*writing;
 }				t_data;
 
 int			parse_args(int ac, char **av, t_data *data);

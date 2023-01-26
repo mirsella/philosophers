@@ -6,18 +6,17 @@
 /*   By: mirsella <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 10:51:43 by mirsella          #+#    #+#             */
-/*   Updated: 2023/01/23 17:27:09 by mirsella         ###   ########.fr       */
+/*   Updated: 2023/01/26 15:38:31 by mirsella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILOSOPHERS_H
 # define PHILOSOPHERS_H
 
-# include "stdio.h"
-# include "stdlib.h"
+# include <stdio.h> // for printf
 # include <pthread.h>
-# include <unistd.h>
-# include <string.h>
+# include <unistd.h> // for usleep
+# include <string.h> // for memset
 
 # include <sys/time.h>
 

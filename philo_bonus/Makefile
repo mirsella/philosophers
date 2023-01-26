@@ -4,7 +4,7 @@ OBJS = $(SRCS:.c=.o)
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
 # CFLAGS += -g3
-NAME = philo
+NAME = philo_bonus
 
 all: $(NAME)
 

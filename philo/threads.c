@@ -6,7 +6,7 @@
 /*   By: lgillard <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 16:22:30 by lgillard          #+#    #+#             */
-/*   Updated: 2023/01/29 22:38:06 by mirsella         ###   ########.fr       */
+/*   Updated: 2023/01/30 21:37:32 by mirsella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void	check_eat(t_data *data)
 			break ;
 		i = 0;
 		while (data->rules.nb_min_eat != -1 && i < data->rules.nb_philo
-				&& data->philos[i].nb_eat >= data->rules.nb_min_eat)
+			&& data->philos[i].nb_eat >= data->rules.nb_min_eat)
 			i++;
 		if (i == data->rules.nb_philo)
 			data->rules.exit = 1;

@@ -6,7 +6,7 @@
 /*   By: lgillard <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 11:15:10 by lgillard          #+#    #+#             */
-/*   Updated: 2023/01/29 23:25:20 by mirsella         ###   ########.fr       */
+/*   Updated: 2023/01/30 21:36:21 by mirsella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@ int	init_semaphores(t_data *data)
 {
 	sem_unlink("/philo_forks");
 	sem_unlink("/philo_writing");
-	data->forks = sem_open("/philo_forks", O_CREAT, S_IRWXU, data->rules.nb_philo);
+	data->forks = sem_open("/philo_forks", O_CREAT,
+			S_IRWXU, data->rules.nb_philo);
 	data->writing = sem_open("/philo_writing", O_CREAT, S_IRWXU, 1);
 	if (data->forks == SEM_FAILED || data->writing == SEM_FAILED)
 		return (1);

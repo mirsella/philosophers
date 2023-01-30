@@ -6,7 +6,7 @@
 /*   By: lgillard <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 16:22:30 by lgillard          #+#    #+#             */
-/*   Updated: 2023/01/30 21:23:33 by mirsella         ###   ########.fr       */
+/*   Updated: 2023/01/30 21:36:53 by mirsella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,8 @@ void	philo(t_philo *p)
 	while (!p->rules->exit)
 	{
 		philo_eat(p);
-		if (p->rules->exit || (p->rules->nb_min_eat != -1 && p->nb_eat >= p->rules->nb_min_eat))
+		if (p->rules->exit || (p->rules->nb_min_eat != -1
+				&& p->nb_eat >= p->rules->nb_min_eat))
 			break ;
 		ft_putinfo(*p, "is sleeping");
 		usleep_check_exit(p->rules, p->rules->time_to_sleep);
@@ -121,9 +122,9 @@ int	start_threads(t_data *data)
 		{
 			data->rules.exit = 1;
 			printf("Error: fork failed\n");
+			free_semaphores(data);
 			return (1);
 		}
-		// usleep(100);
 		i++;
 	}
 	handle_exit(data);

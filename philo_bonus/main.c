@@ -6,7 +6,7 @@
 /*   By: lgillard <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 11:09:58 by lgillard          #+#    #+#             */
-/*   Updated: 2023/01/30 20:10:34 by mirsella         ###   ########.fr       */
+/*   Updated: 2023/01/30 21:30:55 by mirsella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,9 @@ int	main(int ac, char **av)
 		printf("Error: invalid number of arguments\n");
 		return (0);
 	}
-	if(parse_args(ac, av, &data))
-		return (1);
+	if (parse_args(ac, av, &data))
+		exit(1);
 	if (start_threads(&data))
-	{
-		free_semaphores(&data);
-		return (1);
-	}
-	free_semaphores(&data);
+		exit(1);
 	return (0);
 }

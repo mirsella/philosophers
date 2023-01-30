@@ -6,7 +6,7 @@
 /*   By: mirsella <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 10:51:43 by mirsella          #+#    #+#             */
-/*   Updated: 2023/01/26 15:37:54 by lgillard         ###   ########.fr       */
+/*   Updated: 2023/01/30 19:49:05 by mirsella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,13 @@
 # include <stdio.h>
 # include <pthread.h> // for threads
 # include <unistd.h> // for usleep
-# include <semaphore.h>
+# include <semaphore.h> // for sem_*
 # include <fcntl.h> // for O_* constants
 # include <sys/stat.h> // for mode constants
 # include <string.h> // for memset
 # include <sys/time.h> // for gettimeofday
+# include <sys/wait.h> // for waitpid
+# include <stdlib.h> // for exit
 
 # define MAX_PHILO 250
 
@@ -41,6 +43,7 @@ typedef struct s_philo
 	pid_t		pid;
 	int			nb_eat;
 	long long	last_eat;
+	pthread_t	thread;
 	sem_t		*forks;
 	sem_t		*writing;
 	t_rules		*rules;

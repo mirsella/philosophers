@@ -6,7 +6,7 @@
 /*   By: lgillard <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 16:22:30 by lgillard          #+#    #+#             */
-/*   Updated: 2023/01/26 15:34:14 by lgillard         ###   ########.fr       */
+/*   Updated: 2023/01/30 21:23:33 by mirsella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,97 +14,118 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-// void	philo_eat(t_philo *p)
-// {
-// 	pthread_mutex_lock(p->left_fork);
-// 	if (p->rules->exit)
-// 	{
-// 		pthread_mutex_unlock(p->left_fork);
-// 		return ;
-// 	}
-// 	ft_putinfo(*p, "has taken a fork");
-// 	pthread_mutex_lock(p->right_fork);
-// 	if (p->rules->exit)
-// 	{
-// 		pthread_mutex_unlock(p->left_fork);
-// 		pthread_mutex_unlock(p->right_fork);
-// 		return ;
-// 	}
-// 	ft_putinfo(*p, "has taken a fork");
-// 	ft_putinfo(*p, "is eating");
-// 	usleep_check_exit(p->rules, p->rules->time_to_eat);
-// 	pthread_mutex_unlock(p->left_fork);
-// 	pthread_mutex_unlock(p->right_fork);
-// 	p->last_eat = get_time();
-// 	p->nb_eat++;
-// }
+void	*check_eat(void *void_philo)
+{
+	t_philo		*p;
+
+	p = (t_philo *)void_philo;
+	while (!p->rules->exit)
+	{
+		if (get_time() - p->last_eat > p->rules->time_to_die)
+		{
+			p->rules->exit = 1;
+			ft_putinfo(*p, "died");
+		}
+		if (p->rules->nb_min_eat != -1 && p->nb_eat >= p->rules->nb_min_eat)
+			break ;
+	}
+	return (NULL);
+}
+
+void	philo_eat(t_philo *p)
+{
+	sem_wait(p->forks);
+	if (p->rules->exit)
+	{
+		sem_post(p->forks);
+		return ;
+	}
+	ft_putinfo(*p, "has taken a fork");
+	sem_wait(p->forks);
+	if (p->rules->exit)
+	{
+		sem_post(p->forks);
+		sem_post(p->forks);
+		return ;
+	}
+	ft_putinfo(*p, "has taken a fork");
+	ft_putinfo(*p, "is eating");
+	usleep_check_exit(p->rules, p->rules->time_to_eat);
+	sem_post(p->forks);
+	sem_post(p->forks);
+	p->last_eat = get_time();
+	p->nb_eat++;
+}
 
 void	philo(t_philo *p)
 {
-	printf("philo %d, pid %d, at %lld\n", p->id, getpid(), get_time() - p->rules->start_time);
+	p->last_eat = get_time();
 	if (p->id % 2)
 		usleep(10000);
-	// while (!p->rules->exit)
-	// {
-		// philo_eat(p);
-		// if (p->rules->exit)
-		// 	break ;
-		// ft_putinfo(*p, "is sleeping");
-		// usleep_check_exit(p->rules, p->rules->time_to_sleep);
-	// }
+	pthread_create(&p->thread, NULL, check_eat, p);
+	while (!p->rules->exit)
+	{
+		philo_eat(p);
+		if (p->rules->exit || (p->rules->nb_min_eat != -1 && p->nb_eat >= p->rules->nb_min_eat))
+			break ;
+		ft_putinfo(*p, "is sleeping");
+		usleep_check_exit(p->rules, p->rules->time_to_sleep);
+	}
+	pthread_join(p->thread, NULL);
+	free_semaphores(&(t_data){.forks = p->forks, .writing = p->writing});
+	if (p->rules->exit)
+		exit(1);
+	exit(0);
 }
 
-void	check_eat(t_data *data)
+void	handle_exit(t_data *data)
 {
+	int	ret;
 	int	i;
 
-	while (!data->rules.exit)
+	ret = 0;
+	i = 0;
+	while (i < data->rules.nb_philo)
 	{
-		i = 0;
-		while (i < data->rules.nb_philo && !data->rules.exit)
+		waitpid(-1, &ret, 0);
+		if (ret != 0)
 		{
-			if (get_time() - data->philos[i].last_eat > data->rules.time_to_die)
+			i = 0;
+			while (i < data->rules.nb_philo)
 			{
-				data->rules.exit = 1;
-				ft_putinfo(data->philos[i], "died");
+				kill(data->philos[i].pid, SIGTERM);
+				i++;
 			}
-			i++;
-		}
-		if (data->rules.exit)
 			break ;
-		i = 0;
-		while (data->rules.nb_min_eat != -1 && i < data->rules.nb_philo
-				&& data->philos[i].nb_eat >= data->rules.nb_min_eat)
-			i++;
-		if (i == data->rules.nb_philo)
-			data->rules.exit = 1;
+		}
+		i++;
 	}
+	free_semaphores(data);
 }
 
 int	start_threads(t_data *data)
 {
 	int		i;
-	pid_t	ret;
 
 	i = 0;
 	data->rules.start_time = get_time();
 	while (i < data->rules.nb_philo)
 	{
-		ret = fork();
-		if (ret == 0)
+		data->philos[i].pid = fork();
+		if (data->philos[i].pid == 0)
+		{
 			philo(&data->philos[i]);
-		else if (ret > 0)
-			data->philos[i].pid = ret;
-		else if (ret < 0)
+			return (0);
+		}
+		else if (data->philos[i].pid < 0)
 		{
 			data->rules.exit = 1;
 			printf("Error: fork failed\n");
-			free_semaphores(data);
-			return (0);
+			return (1);
 		}
+		// usleep(100);
 		i++;
 	}
-	check_eat(data);
-	free_semaphores(data);
-	return (1);
+	handle_exit(data);
+	return (0);
 }

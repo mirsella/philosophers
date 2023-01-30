@@ -1,9 +1,9 @@
-SRCS = main.c utils.c free.c parse.c threads.c 
+SRCS = main.c utils.c parse.c threads.c 
 OBJS = $(SRCS:.c=.o)
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
-# CFLAGS += -g3
+CFLAGS += -g3
 NAME = philo_bonus
 
 all: $(NAME)

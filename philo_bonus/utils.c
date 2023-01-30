@@ -6,11 +6,12 @@
 /*   By: lgillard <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 11:18:16 by lgillard          #+#    #+#             */
-/*   Updated: 2023/01/23 11:21:39 by lgillard         ###   ########.fr       */
+/*   Updated: 2023/01/29 22:23:26 by mirsella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
+#include <semaphore.h>
 #include <sys/time.h>
 
 int	ft_pos_atoi(const char *str)
@@ -48,9 +49,9 @@ long long	get_time(void)
 
 void	ft_putinfo(t_philo philo, char *str)
 {
-	pthread_mutex_lock(philo.writing);
+	sem_wait(philo.writing);
 	printf("%lld %d %s\n", get_time() - philo.rules->start_time, philo.id, str);
-	pthread_mutex_unlock(philo.writing);
+	sem_post(philo.writing);
 }
 
 int	usleep_check_exit(t_rules *rules, long long time)

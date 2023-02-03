@@ -6,7 +6,7 @@
 /*   By: lgillard <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 16:22:30 by lgillard          #+#    #+#             */
-/*   Updated: 2023/01/30 21:44:16 by mirsella         ###   ########.fr       */
+/*   Updated: 2023/02/03 13:40:52 by mirsella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,29 +32,33 @@ void	*check_eat(void *void_philo)
 	return (NULL);
 }
 
-void	philo_eat(t_philo *p)
+int	philo_eat(t_philo *p)
 {
 	sem_wait(p->forks);
-	if (p->rules->exit)
+	if (!p->rules->exit)
+		ft_putinfo(*p, "has taken a fork");
+	if (p->rules->exit || p->rules->nb_philo == 1)
 	{
 		sem_post(p->forks);
-		return ;
+		return (1);
 	}
-	ft_putinfo(*p, "has taken a fork");
 	sem_wait(p->forks);
 	if (p->rules->exit)
 	{
 		sem_post(p->forks);
 		sem_post(p->forks);
-		return ;
+		return (1);
 	}
 	ft_putinfo(*p, "has taken a fork");
+	p->last_eat = get_time();
 	ft_putinfo(*p, "is eating");
 	usleep_check_exit(p->rules, p->rules->time_to_eat);
-	sem_post(p->forks);
-	sem_post(p->forks);
-	p->last_eat = get_time();
 	p->nb_eat++;
+	sem_post(p->forks);
+	sem_post(p->forks);
+	if (p->rules->exit)
+		return (1);
+	return (0);
 }
 
 void	philo(t_philo *p)
@@ -65,8 +69,7 @@ void	philo(t_philo *p)
 	pthread_create(&p->thread, NULL, check_eat, p);
 	while (!p->rules->exit)
 	{
-		philo_eat(p);
-		if (p->rules->exit || (p->rules->nb_min_eat != -1
+		if (philo_eat(p) || (p->rules->nb_min_eat != -1
 				&& p->nb_eat >= p->rules->nb_min_eat))
 			break ;
 		ft_putinfo(*p, "is sleeping");

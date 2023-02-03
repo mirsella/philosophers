@@ -6,7 +6,7 @@
 /*   By: lgillard <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 16:22:30 by lgillard          #+#    #+#             */
-/*   Updated: 2023/02/03 12:41:39 by mirsella         ###   ########.fr       */
+/*   Updated: 2023/02/03 13:37:07 by lgillard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@
 int	philo_eat(t_philo *p)
 {
 	pthread_mutex_lock(p->left_fork);
-	ft_putinfo(*p, "has taken a fork");
+	if (!p->rules->exit)
+		ft_putinfo(*p, "has taken a fork");
 	if (p->rules->exit || p->left_fork == p->right_fork)
 	{
 		pthread_mutex_unlock(p->left_fork);
@@ -30,12 +31,12 @@ int	philo_eat(t_philo *p)
 		return (1);
 	}
 	ft_putinfo(*p, "has taken a fork");
+	p->last_eat = get_time();
 	ft_putinfo(*p, "is eating");
 	usleep_check_exit(p->rules, p->rules->time_to_eat);
+	p->nb_eat++;
 	pthread_mutex_unlock(p->left_fork);
 	pthread_mutex_unlock(p->right_fork);
-	p->last_eat = get_time();
-	p->nb_eat++;
 	if (p->rules->exit)
 		return (1);
 	return (0);

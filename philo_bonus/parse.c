@@ -6,7 +6,7 @@
 /*   By: lgillard <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 11:15:10 by lgillard          #+#    #+#             */
-/*   Updated: 2023/01/30 21:36:21 by mirsella         ###   ########.fr       */
+/*   Updated: 2023/02/03 13:11:01 by lgillard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int	parse_args(int ac, char **av, t_data *data)
 	data->rules.time_to_sleep = ft_pos_atoi(av[4]);
 	if (ac == 6)
 		data->rules.nb_min_eat = ft_pos_atoi(av[5]);
-	if (data->rules.nb_philo < 2 || data->rules.nb_philo > 250
+	if (data->rules.nb_philo < 1 || data->rules.nb_philo > 250
 		|| data->rules.time_to_die < 0 || data->rules.time_to_eat < 0
 		|| data->rules.time_to_sleep < 0
 		|| (data->rules.nb_min_eat < 1 && ac == 6))

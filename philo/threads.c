@@ -6,28 +6,28 @@
 /*   By: lgillard <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 16:22:30 by lgillard          #+#    #+#             */
-/*   Updated: 2023/01/30 21:37:32 by mirsella         ###   ########.fr       */
+/*   Updated: 2023/02/03 12:41:39 by mirsella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 #include <unistd.h>
 
-void	philo_eat(t_philo *p)
+int	philo_eat(t_philo *p)
 {
 	pthread_mutex_lock(p->left_fork);
-	if (p->rules->exit)
+	ft_putinfo(*p, "has taken a fork");
+	if (p->rules->exit || p->left_fork == p->right_fork)
 	{
 		pthread_mutex_unlock(p->left_fork);
-		return ;
+		return (1);
 	}
-	ft_putinfo(*p, "has taken a fork");
 	pthread_mutex_lock(p->right_fork);
 	if (p->rules->exit)
 	{
 		pthread_mutex_unlock(p->left_fork);
 		pthread_mutex_unlock(p->right_fork);
-		return ;
+		return (1);
 	}
 	ft_putinfo(*p, "has taken a fork");
 	ft_putinfo(*p, "is eating");
@@ -36,6 +36,9 @@ void	philo_eat(t_philo *p)
 	pthread_mutex_unlock(p->right_fork);
 	p->last_eat = get_time();
 	p->nb_eat++;
+	if (p->rules->exit)
+		return (1);
+	return (0);
 }
 
 void	*philo(void *void_philo)
@@ -47,8 +50,7 @@ void	*philo(void *void_philo)
 		usleep(10000);
 	while (!p->rules->exit)
 	{
-		philo_eat(p);
-		if (p->rules->exit)
+		if (philo_eat(p))
 			break ;
 		ft_putinfo(*p, "is sleeping");
 		usleep_check_exit(p->rules, p->rules->time_to_sleep);

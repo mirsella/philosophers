@@ -6,7 +6,7 @@
 /*   By: lgillard <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 16:22:30 by lgillard          #+#    #+#             */
-/*   Updated: 2023/02/03 14:42:20 by mirsella         ###   ########.fr       */
+/*   Updated: 2023/02/03 15:26:54 by mirsella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,37 +14,18 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-void	*check_eat(void *void_philo)
-{
-	t_philo		*p;
-
-	p = (t_philo *)void_philo;
-	while (!p->rules->exit)
-	{
-		if (get_time() - p->last_eat > p->rules->time_to_die)
-		{
-			p->rules->exit = 1;
-			sem_wait(p->writing);
-			printf("%lld %d died\n", get_time() - p->rules->start_time, p->id);
-		}
-		if (p->rules->nb_min_eat != -1 && p->nb_eat >= p->rules->nb_min_eat)
-			break ;
-	}
-	return (NULL);
-}
-
 int	philo_eat(t_philo *p)
 {
 	sem_wait(p->forks);
-	if (!p->rules->exit)
+	if (isalive(p))
 		ft_putinfo(*p, "has taken a fork");
-	if (p->rules->exit || p->rules->nb_philo == 1)
+	if (!isalive(p) || p->rules->nb_philo == 1)
 	{
 		sem_post(p->forks);
 		return (1);
 	}
 	sem_wait(p->forks);
-	if (p->rules->exit)
+	if (!isalive(p))
 	{
 		sem_post(p->forks);
 		sem_post(p->forks);
@@ -53,34 +34,46 @@ int	philo_eat(t_philo *p)
 	ft_putinfo(*p, "has taken a fork");
 	p->last_eat = get_time();
 	ft_putinfo(*p, "is eating");
-	usleep_check_exit(p->rules, p->rules->time_to_eat);
+	usleep_check_alive(p, p->rules->time_to_eat);
 	p->nb_eat++;
 	sem_post(p->forks);
 	sem_post(p->forks);
-	if (p->rules->exit)
+	if (!isalive(p))
 		return (1);
 	return (0);
 }
 
 void	philo(t_philo *p)
 {
+	while (get_time() >= p->rules->start_time + 10)
+		;
 	p->last_eat = get_time();
 	if (p->id % 2)
 		usleep(10000);
-	pthread_create(&p->thread, NULL, check_eat, p);
-	while (!p->rules->exit)
+	while (isalive(p))
 	{
 		if (philo_eat(p) || (p->rules->nb_min_eat != -1
 				&& p->nb_eat >= p->rules->nb_min_eat))
 			break ;
 		ft_putinfo(*p, "is sleeping");
-		usleep_check_exit(p->rules, p->rules->time_to_sleep);
+		usleep_check_alive(p, p->rules->time_to_sleep);
 	}
-	pthread_join(p->thread, NULL);
 	free_semaphores(&(t_data){.forks = p->forks, .writing = p->writing});
-	if (p->rules->exit)
+	if (!isalive(p))
 		exit(1);
 	exit(0);
+}
+
+void	kill_process(t_data *data)
+{
+	int	i;
+
+	i = 0;
+	while (i < data->rules.nb_philo)
+	{
+		kill(data->philos[i].pid, SIGKILL);
+		i++;
+	}
 }
 
 void	handle_exit(t_data *data)
@@ -95,12 +88,7 @@ void	handle_exit(t_data *data)
 		waitpid(-1, &ret, 0);
 		if (ret != 0)
 		{
-			i = 0;
-			while (i < data->rules.nb_philo)
-			{
-				kill(data->philos[i].pid, SIGKILL);
-				i++;
-			}
+			kill_process(data);
 			break ;
 		}
 		i++;
@@ -124,8 +112,8 @@ int	start_threads(t_data *data)
 		}
 		else if (data->philos[i].pid < 0)
 		{
-			data->rules.exit = 1;
 			printf("Error: fork failed\n");
+			kill_process(data);
 			free_semaphores(data);
 			return (1);
 		}

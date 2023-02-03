@@ -6,7 +6,7 @@
 /*   By: lgillard <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 11:18:16 by lgillard          #+#    #+#             */
-/*   Updated: 2023/02/03 14:31:11 by lgillard         ###   ########.fr       */
+/*   Updated: 2023/02/03 15:28:08 by lgillard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,18 @@ long long	get_time(void)
 	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
+int	isalive(t_philo *philo)
+{
+	if (get_time() - philo->last_eat > philo->rules->time_to_die)
+	{
+		sem_wait(philo->writing);
+		printf("%lld %d died", get_time() - philo->rules->start_time,
+			philo->id);
+		return (0);
+	}
+	return (1);
+}
+
 void	ft_putinfo(t_philo philo, char *str)
 {
 	sem_wait(philo.writing);
@@ -54,18 +66,15 @@ void	ft_putinfo(t_philo philo, char *str)
 	sem_post(philo.writing);
 }
 
-int	usleep_check_exit(t_rules *rules, long long time)
+void	usleep_check_alive(t_philo *p, long long time)
 {
 	long long	start;
 
 	start = get_time();
-	while (!rules->exit)
+	while (isalive(p))
 	{
 		if (get_time() - start >= time)
 			break ;
 		usleep(50);
 	}
-	if (rules->exit)
-		return (0);
-	return (1);
 }

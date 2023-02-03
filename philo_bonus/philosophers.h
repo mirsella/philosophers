@@ -6,7 +6,7 @@
 /*   By: mirsella <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 10:51:43 by mirsella          #+#    #+#             */
-/*   Updated: 2023/01/30 19:49:05 by mirsella         ###   ########.fr       */
+/*   Updated: 2023/02/03 15:27:26 by lgillard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,6 @@ typedef struct s_philo
 	pid_t		pid;
 	int			nb_eat;
 	long long	last_eat;
-	pthread_t	thread;
 	sem_t		*forks;
 	sem_t		*writing;
 	t_rules		*rules;
@@ -61,9 +60,10 @@ int			parse_args(int ac, char **av, t_data *data);
 int			start_threads(t_data *data);
 int			ft_pos_atoi(const char *str);
 void		ft_putstr_fd(char *s, int fd);
+int			isalive(t_philo *philo);
 long long	get_time(void);
 void		ft_putinfo(t_philo philo, char *str);
-int			usleep_check_exit(t_rules *rules, long long time);
+void		usleep_check_alive(t_philo *p, long long time);
 void		free_semaphores(t_data *data);
 void		close_threads(t_data *data);
 

@@ -3,7 +3,7 @@ OBJS = $(SRCS:.c=.o)
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
-CFLAGS += -g3
+# CFLAGS += -g3
 NAME = philo
 
 all: $(NAME)

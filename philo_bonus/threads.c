@@ -6,7 +6,7 @@
 /*   By: lgillard <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 16:22:30 by lgillard          #+#    #+#             */
-/*   Updated: 2023/02/03 13:40:52 by mirsella         ###   ########.fr       */
+/*   Updated: 2023/02/03 14:42:20 by mirsella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ void	*check_eat(void *void_philo)
 		if (get_time() - p->last_eat > p->rules->time_to_die)
 		{
 			p->rules->exit = 1;
-			ft_putinfo(*p, "died");
+			sem_wait(p->writing);
+			printf("%lld %d died\n", get_time() - p->rules->start_time, p->id);
 		}
 		if (p->rules->nb_min_eat != -1 && p->nb_eat >= p->rules->nb_min_eat)
 			break ;
@@ -97,7 +98,7 @@ void	handle_exit(t_data *data)
 			i = 0;
 			while (i < data->rules.nb_philo)
 			{
-				kill(data->philos[i].pid, SIGTERM);
+				kill(data->philos[i].pid, SIGKILL);
 				i++;
 			}
 			break ;

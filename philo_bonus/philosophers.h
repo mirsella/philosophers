@@ -6,7 +6,7 @@
 /*   By: mirsella <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 10:51:43 by mirsella          #+#    #+#             */
-/*   Updated: 2023/02/03 15:27:26 by lgillard         ###   ########.fr       */
+/*   Updated: 2023/02/03 15:33:36 by lgillard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ typedef struct s_philo
 	int			id;
 	pid_t		pid;
 	int			nb_eat;
+	int			died;
 	long long	last_eat;
 	sem_t		*forks;
 	sem_t		*writing;

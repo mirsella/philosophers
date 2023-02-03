@@ -6,7 +6,7 @@
 /*   By: lgillard <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 16:22:30 by lgillard          #+#    #+#             */
-/*   Updated: 2023/02/03 15:26:54 by mirsella         ###   ########.fr       */
+/*   Updated: 2023/02/03 15:36:07 by mirsella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,7 @@
 int	philo_eat(t_philo *p)
 {
 	sem_wait(p->forks);
-	if (isalive(p))
-		ft_putinfo(*p, "has taken a fork");
+	ft_putinfo(*p, "has taken a fork");
 	if (!isalive(p) || p->rules->nb_philo == 1)
 	{
 		sem_post(p->forks);
@@ -38,9 +37,7 @@ int	philo_eat(t_philo *p)
 	p->nb_eat++;
 	sem_post(p->forks);
 	sem_post(p->forks);
-	if (!isalive(p))
-		return (1);
-	return (0);
+	return (!isalive(p));
 }
 
 void	philo(t_philo *p)

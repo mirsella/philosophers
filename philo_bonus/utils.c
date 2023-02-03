@@ -6,7 +6,7 @@
 /*   By: lgillard <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 11:18:16 by lgillard          #+#    #+#             */
-/*   Updated: 2023/02/03 15:28:08 by lgillard         ###   ########.fr       */
+/*   Updated: 2023/02/03 15:33:57 by lgillard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,11 @@ long long	get_time(void)
 
 int	isalive(t_philo *philo)
 {
+	if (philo->died)
+		return (0);
 	if (get_time() - philo->last_eat > philo->rules->time_to_die)
 	{
+		philo->died = 1;
 		sem_wait(philo->writing);
 		printf("%lld %d died", get_time() - philo->rules->start_time,
 			philo->id);

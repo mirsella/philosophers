@@ -23,6 +23,8 @@ int	sem_post_return(sem_t *sem)
 int	philo_eat(t_philo *p)
 {
 	sem_wait(p->forks);
+	if (!isalive(p))
+		return (sem_post_return(p->forks));
 	ft_putinfo(*p, "has taken a fork");
 	if (p->rules->nb_philo == 1)
 	{

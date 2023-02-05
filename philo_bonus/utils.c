@@ -51,7 +51,7 @@ int	isalive(t_philo *philo)
 {
 	if (philo->died)
 		return (0);
-	if (get_time() - philo->last_eat > philo->rules->time_to_die)
+	else if (get_time() - philo->last_eat > philo->rules->time_to_die)
 	{
 		philo->died = 1;
 		sem_wait(philo->writing);

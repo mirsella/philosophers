@@ -14,14 +14,21 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+int	sem_post_return(sem_t *sem)
+{
+	sem_post(sem);
+	return (1);
+}
+
 int	philo_eat(t_philo *p)
 {
 	sem_wait(p->forks);
 	ft_putinfo(*p, "has taken a fork");
-	if (!isalive(p) || p->rules->nb_philo == 1)
+	if (p->rules->nb_philo == 1)
 	{
-		sem_post(p->forks);
-		return (1);
+		sem_wait(p->writing);
+		printf("%lld %d died", p->rules->time_to_die, p->id);
+		return (sem_post_return(p->forks));
 	}
 	sem_wait(p->forks);
 	if (!isalive(p))

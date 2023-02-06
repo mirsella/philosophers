@@ -6,7 +6,7 @@
 /*   By: mirsella <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 10:51:43 by mirsella          #+#    #+#             */
-/*   Updated: 2023/02/03 15:33:36 by lgillard         ###   ########.fr       */
+/*   Updated: 2023/02/06 12:01:58 by lgillard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,11 +61,14 @@ int			parse_args(int ac, char **av, t_data *data);
 int			start_threads(t_data *data);
 int			ft_pos_atoi(const char *str);
 void		ft_putstr_fd(char *s, int fd);
-int			isalive(t_philo *philo);
+void		kill_process(t_data *data);
 long long	get_time(void);
 void		ft_putinfo(t_philo philo, char *str);
 void		usleep_check_alive(t_philo *p, long long time);
 void		free_semaphores(t_data *data);
 void		close_threads(t_data *data);
+void		handle_exit(t_data *data);
+int			isalive(t_philo *philo);
+int			sem_post_return(sem_t *sem);
 
 #endif

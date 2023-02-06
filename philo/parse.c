@@ -6,7 +6,7 @@
 /*   By: lgillard <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 11:15:10 by lgillard          #+#    #+#             */
-/*   Updated: 2023/02/03 10:05:08 by mirsella         ###   ########.fr       */
+/*   Updated: 2023/02/06 09:34:50 by lgillard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,17 @@ int	init_mutex(t_data *data)
 		pthread_mutex_init(&data->forks[i], NULL);
 		if (&data->forks[i] == NULL)
 			return (1);
+		pthread_mutex_init(&data->last_eat_mutex[i], NULL);
+		if (&data->last_eat_mutex[i] == NULL)
+			return (1);
+		pthread_mutex_init(&data->nb_eat_mutex[i], NULL);
+		if (&data->nb_eat_mutex[i] == NULL)
+			return (1);
 		i++;
 	}
 	if (pthread_mutex_init(&data->writing, NULL))
+		return (1);
+	if (pthread_mutex_init(&data->exit_check, NULL))
 		return (1);
 	return (0);
 }
@@ -41,6 +49,8 @@ void	init_philos(t_data *data)
 		data->philos[i].last_eat = 0;
 		data->philos[i].rules = &data->rules;
 		data->philos[i].writing = &data->writing;
+		data->philos[i].last_eat_mutex = &data->last_eat_mutex[i];
+		data->philos[i].nb_eat_mutex = &data->nb_eat_mutex[i];
 		data->philos[i].left_fork = &data->forks[i];
 		data->philos[i].right_fork = &data->forks[(i + 1)
 			% data->rules.nb_philo];

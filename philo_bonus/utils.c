@@ -6,7 +6,7 @@
 /*   By: lgillard <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 11:18:16 by lgillard          #+#    #+#             */
-/*   Updated: 2023/02/03 15:33:57 by lgillard         ###   ########.fr       */
+/*   Updated: 2023/02/06 12:24:57 by lgillard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,21 +47,6 @@ long long	get_time(void)
 	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
-int	isalive(t_philo *philo)
-{
-	if (philo->died)
-		return (0);
-	else if (get_time() - philo->last_eat > philo->rules->time_to_die)
-	{
-		philo->died = 1;
-		sem_wait(philo->writing);
-		printf("%lld %d died", get_time() - philo->rules->start_time,
-			philo->id);
-		return (0);
-	}
-	return (1);
-}
-
 void	ft_putinfo(t_philo philo, char *str)
 {
 	sem_wait(philo.writing);
@@ -80,4 +65,10 @@ void	usleep_check_alive(t_philo *p, long long time)
 			break ;
 		usleep(50);
 	}
+}
+
+int	sem_post_return(sem_t *sem)
+{
+	sem_post(sem);
+	return (1);
 }

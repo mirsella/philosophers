@@ -6,7 +6,7 @@
 /*   By: lgillard <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 16:22:30 by lgillard          #+#    #+#             */
-/*   Updated: 2023/02/03 15:36:07 by mirsella         ###   ########.fr       */
+/*   Updated: 2023/02/06 13:21:33 by mirsella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,33 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-int	sem_post_return(sem_t *sem)
+int	isalive(t_philo *philo)
 {
-	sem_post(sem);
+	if (philo->died)
+		return (0);
+	else if (get_time() - philo->last_eat > philo->rules->time_to_die)
+	{
+		philo->died = 1;
+		sem_wait(philo->writing);
+		printf("%lld %d died\n", get_time() - philo->rules->start_time,
+			philo->id);
+		return (0);
+	}
 	return (1);
+}
+
+void	sleep_for_forks(t_philo *p)
+{
+	long long	time;
+
+	if (p->rules->time_to_eat > p->rules->time_to_sleep)
+		time = p->rules->time_to_eat;
+	else
+		time = p->rules->time_to_sleep;
+	if (p->rules->nb_philo % 2 == 0)
+		usleep_check_alive(p, time);
+	else
+		usleep_check_alive(p, time * 2);
 }
 
 int	philo_eat(t_philo *p)
@@ -55,51 +78,19 @@ void	philo(t_philo *p)
 		;
 	p->last_eat = get_time();
 	if (p->id % 2)
-		usleep(10000);
+		usleep_check_alive(p, p->rules->time_to_eat);
 	while (isalive(p))
 	{
 		if (philo_eat(p) || (p->rules->nb_min_eat != -1
 				&& p->nb_eat >= p->rules->nb_min_eat))
 			break ;
 		ft_putinfo(*p, "is sleeping");
-		usleep_check_alive(p, p->rules->time_to_sleep);
+		sleep_for_forks(p);
 	}
 	free_semaphores(&(t_data){.forks = p->forks, .writing = p->writing});
 	if (!isalive(p))
 		exit(1);
 	exit(0);
-}
-
-void	kill_process(t_data *data)
-{
-	int	i;
-
-	i = 0;
-	while (i < data->rules.nb_philo)
-	{
-		kill(data->philos[i].pid, SIGKILL);
-		i++;
-	}
-}
-
-void	handle_exit(t_data *data)
-{
-	int	ret;
-	int	i;
-
-	ret = 0;
-	i = 0;
-	while (i < data->rules.nb_philo)
-	{
-		waitpid(-1, &ret, 0);
-		if (ret != 0)
-		{
-			kill_process(data);
-			break ;
-		}
-		i++;
-	}
-	free_semaphores(data);
 }
 
 int	start_threads(t_data *data)

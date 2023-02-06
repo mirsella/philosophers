@@ -6,19 +6,11 @@
 /*   By: lgillard <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 11:09:58 by lgillard          #+#    #+#             */
-/*   Updated: 2023/01/30 21:30:55 by mirsella         ###   ########.fr       */
+/*   Updated: 2023/02/06 08:37:33 by lgillard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
-
-void	free_semaphores(t_data *data)
-{
-	sem_close(data->forks);
-	sem_close(data->writing);
-	sem_unlink("/philo_forks");
-	sem_unlink("/philo_writing");
-}
 
 int	main(int ac, char **av)
 {

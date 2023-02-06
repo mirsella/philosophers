@@ -6,7 +6,7 @@
 /*   By: lgillard <mirsella@protonmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 11:18:16 by lgillard          #+#    #+#             */
-/*   Updated: 2023/01/23 11:21:39 by lgillard         ###   ########.fr       */
+/*   Updated: 2023/02/06 10:28:41 by lgillard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ int	ft_pos_atoi(const char *str)
 		res = res * 10 + str[i] - '0';
 		i++;
 	}
+	if (str[i] != '\0' || res < 0)
+		return (-1);
 	return (res * neg);
 }
 
@@ -58,13 +60,13 @@ int	usleep_check_exit(t_rules *rules, long long time)
 	long long	start;
 
 	start = get_time();
-	while (!rules->exit)
+	while (!isexit(rules))
 	{
 		if (get_time() - start >= time)
 			break ;
 		usleep(50);
 	}
-	if (rules->exit)
+	if (isexit(rules))
 		return (0);
 	return (1);
 }
